@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 
+// Utility to get backend API base URL from .env config (top-level so all components use it)
+const API_BASE =
+  process.env.REACT_APP_API_BASE_URL ||
+  "https://vscode-internal-5302-qa.qa01.cloud.kavia.ai:3001";
+
 // Useful theme colors - can be reused in inline style if needed
 const THEME = {
   primary: "#1976d2",
@@ -98,8 +103,7 @@ function TicketForm({ onSuccess }) {
     setError("");
     setSuccessData(null);
     try {
-      const resp = await fetch("/tickets", {
-        // proxy should take care of /api/ if not, replace with full backend URL
+      const resp = await fetch(`${API_BASE}/tickets`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ subject, description }),
@@ -201,7 +205,7 @@ function TicketStatusViewer() {
     setError("");
     setStatusData(null);
     try {
-      const resp = await fetch(`/tickets/${ticketId}`);
+      const resp = await fetch(`${API_BASE}/tickets/${ticketId}`);
       if (resp.status === 200) {
         const data = await resp.json();
         setStatusData(data);
@@ -289,7 +293,7 @@ function TicketDashboard() {
     setLoading(true);
     setErr("");
     try {
-      const resp = await fetch("/tickets");
+      const resp = await fetch(`${API_BASE}/tickets`);
       if (resp.status === 200) {
         const data = await resp.json();
         setTickets(data);
